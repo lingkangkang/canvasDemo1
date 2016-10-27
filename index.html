@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<input type="button" value="清除" id="button" >
+</body>
+</html>
+<script>
+    var canvas=document.getElementById('canvas');
+    var pen   =canvas.getContext('2d');
+    canvas.width=600;
+    canvas.height=600;
+    canvas.style.background='pink';
+    var mousedown;
+    var currentX=0;
+    var currentY=0;
+    var currentTime=0;
+    var currentWidth=11;
+
+   window.onload=function(){
+       drawback();
+   }
+
+
+
+    function drawback(){
+        pen.save();
+        pen.strokeStyle='red';
+        pen.lineWidth=6;
+        pen.moveTo(3,3)
+        pen.lineTo(3,597)
+        pen.lineTo(597,597)
+        pen.lineTo(597,3)
+        pen.closePath();
+        pen.stroke();
+
+        pen.beginPath()
+        pen.lineWidth=3
+        pen.moveTo(0,0)
+        pen.lineTo(600,600)
+        pen.stroke();
+        pen.closePath();
+
+        pen.beginPath()
+        pen.lineWidth=3
+        pen.moveTo(600,0)
+        pen.lineTo(0,600)
+        pen.stroke();
+        pen.closePath();
+
+        pen.beginPath()
+        pen.lineWidth=3
+        pen.moveTo(300,0)
+        pen.lineTo(300,600)
+        pen.stroke();
+        pen.closePath();
+
+        pen.beginPath()
+        pen.lineWidth=3
+        pen.moveTo(0,300)
+        pen.lineTo(600,300)
+        pen.stroke();
+        pen.restore();
+        pen.closePath();
+    }
+
+    canvas.onmousedown=function(e) {
+        e.preventDefault();
+        mousedown=true;
+        currentX= e.clientX;
+        currentY= e.clientY;
+        currentTime=new Date().getTime();
+//        console.log(currentTime);
+    }
+    canvas.onmouseup=function(){
+        mousedown=false;
+    }
+    canvas.onmousemove=function(e){
+        e.preventDefault();
+        var x= e.clientX;
+        var y= e.clientY;
+        var nowTime=new Date().getTime();
+        var t =(nowTime-currentTime);
+        var s =Math.sqrt((x-currentX)*(x-currentX)+(y-currentY)*(y-currentY))
+
+        if (mousedown){
+            pen.beginPath()
+            pen.lineWidth=getWidth(s,t);
+            pen.moveTo(currentX,currentY)
+            pen.lineTo(x,y)
+            pen.closePath();
+            pen.lineCap='round';
+            pen.lineJoin='round'
+            pen.stroke();
+
+            currentX=x;
+            currentY=y;
+            currentTime=nowTime;
+            currentWidth=getWidth(s,t);
+        }
+
+
+
+    }
+
+    function getWidth(s,t){
+//        if (currentWidth==-1){
+//            return currentWidth;
+//        }
+        var v=Math.floor(s/t);
+//        console.log(Math.floor(s/t))
+        var nowWidth;
+
+        if (v<=0.1){
+            nowWidth=30;
+        }
+        else if(v>=10){
+            nowWidth=1;
+        }
+        else {
+            nowWidth=v*(30-1)/(10-0.1);
+        }
+
+//        console.log(nowWidth)
+        return nowWidth*1/3+currentWidth*2/3;
+
+
+
+    }
+
+    var button=document.getElementById('button');
+    button.onclick=function(){
+        pen.clearRect(0,0,600,600);
+        drawback();
+    }
+</script>
